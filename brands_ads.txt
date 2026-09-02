@@ -1,0 +1,38 @@
+Zomato | food | IN - 170229159669841
+Swiggy | food | IN - 313788932116395
+Licious | food | IN - 968109179907978
+boAt Lifestyle | electronics | IN - 786827864757998
+Nykaa | beauty | IN - 290603811040262
+Mamaearth | beauty | IN - 619181354927737
+SUGAR Cosmetics | beauty | IN - 100116710332265
+WOW Skin Science | beauty | IN - 168125940677887
+Minimalist | beauty | IN - 107597820995682
+mCaffeine | beauty | IN - 1227086873991372
+Purplle | beauty | IN - 275468419167761
+Bewakoof | apparel | IN - 106503252725893
+Wakefit | home | IN - 1414949458807946
+Urban Company | services | IN - 324693397702420
+HealthKart | health | IN - 170199059695029
+Snitch | apparel | IN - 236672023872356
+Mokobara | Life style | IN - 877758885907009
+The Souled Store | apparel | IN - 391476257640230
+Country Delight | food | IN - 790178521143485
+SuperYou | food | IN - 464781690045779
+Noise | electronics | IN - 1511495619138631
+Fire-Boltt | electronics | IN - 952530174864735
+CRED | fintech | IN - 435049543697636
+Groww | fintech | IN - 1494802560841604
+Slice | fintech | IN - 1489405174696155
+Paytm | fintech | IN - 137725316293048
+PhonePe | fintech | IN - 1015973098467408
+MakeMyTrip | travel | IN - 120740541030
+ixigo | travel | IN - 17705588269
+Duolingo | edtech | IN - 141935472517297
+Spotify India | media | IN - 546648732340372
+Netflix India | media | IN - 863997413714000
+Amazon India | commerce | IN - 100281786832302
+Flipkart | commerce | IN - 102988293558
+Zepto | Quick commerce | IN - 111137961232112
+Blinkit | Quick commerce | IN - 195235680671697
+BigBasket | Quick commerce | IN - 139311472851666
+swiggyinstamart | Quick commerce | IN - 102657402174736

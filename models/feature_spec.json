@@ -1,0 +1,31 @@
+{
+  "metadata_cols": [
+    "duration_seconds",
+    "hour_of_day",
+    "day_of_week",
+    "is_weekend",
+    "title_length",
+    "title_word_count",
+    "tag_count",
+    "description_length",
+    "category_id",
+    "has_caption",
+    "is_short"
+  ],
+  "cv_cols": [
+    "brightness",
+    "contrast",
+    "saturation",
+    "colorfulness",
+    "edge_density",
+    "warm_ratio",
+    "text_area_frac",
+    "face_count",
+    "face_area_frac"
+  ],
+  "clip_dims": 512,
+  "tfidf_max_features": 300,
+  "calib_method": "isotonic",
+  "calib_cv": 5,
+  "order": "dense(metadata+cv) | clip | tfidf(title)"
+}

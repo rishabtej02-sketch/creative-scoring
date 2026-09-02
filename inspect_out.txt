@@ -1,0 +1,225 @@
+ROOT = C:\Users\USER\creative-scoring
+python = 3.13.5
+======================================================================
+CSV FILES in data/
+======================================================================
+
+[brand_spread_table.csv]  0.0 MB
+  rows=73  cols=5
+    source                       object     nuniq=2       eg=['google', 'google']
+    brand                        object     nuniq=38      eg=['swiggy', 'cred']
+    mean                         float64    nuniq=73      eg=['0.5452195022727272', '0.50892208125']
+    std                          float64    nuniq=71      eg=['0.0155157539687751', '0.0221523249597768']
+    count                        int64      nuniq=66      eg=['880', '800']
+
+[calibration_report.csv]  0.0 MB
+  rows=4  cols=3
+    metric                       object     nuniq=4       eg=['AUC', 'Brier']
+    raw                          float64    nuniq=4       eg=['0.6154', '0.2383']
+    calibrated                   float64    nuniq=4       eg=['0.6094', '0.2374']
+
+[channels_resolved.csv]  0.0 MB
+  rows=62  cols=8
+    handle                       object     nuniq=62      eg=['boat-lifestyle', 'Gonoise_Official']
+    channel_id                   object     nuniq=62      eg=['UCY3JXaO_v8H3E6hTYUp5qWQ', 'UCF9puX2jalk1fh14ns_npMw']
+    channel_title                object     nuniq=62      eg=['boAt', 'Noise']
+    channel_country              object     nuniq=7       eg=['IN', 'IN']
+    uploads_playlist             object     nuniq=62      eg=['UUY3JXaO_v8H3E6hTYUp5qWQ', 'UUF9puX2jalk1fh14ns_npMw']
+    subscriber_count             int64      nuniq=60      eg=['253000', '108000']
+    channel_video_count          int64      nuniq=60      eg=['899', '679']
+    subscribers_hidden           bool       nuniq=1       eg=['False', 'False']
+
+[features.csv]  3.7 MB
+  rows=13062  cols=30
+    video_id                     object     nuniq=2000    eg=['sfBapUJCNJc', '3aLI_fPUquo']
+    channel_handle               object     nuniq=9       eg=['Adobe', 'Adobe']
+    channel_id                   object     nuniq=9       eg=['UC5_SBQbLA9Kg7Jh5GpXoP3g', 'UC5_SBQbLA9Kg7Jh5GpXoP3g']
+    format                       object     nuniq=2       eg=['long', 'long']
+    published_at                 object     nuniq=1957    eg=['2025-08-01 23:23:16+00:00', '2025-08-06 12:58:51+00:00']
+    view_count                   float64    nuniq=1892    eg=['959.0', '977.0']
+    baseline_median              float64    nuniq=749     eg=['959.0', '968.0']
+    prior_count                  int64      nuniq=248     eg=['0', '1']
+    labelable                    bool       nuniq=2       eg=['False', 'False']
+    overperformed                float64    nuniq=2       eg=['0.0', '0.0']
+    duration_seconds             int64      nuniq=580     eg=['140', '149']
+    hour_of_day                  int64      nuniq=24      eg=['23', '12']
+    day_of_week                  int64      nuniq=7       eg=['4', '2']
+    is_weekend                   int64      nuniq=2       eg=['0', '0']
+    title_length                 int64      nuniq=95      eg=['59', '60']
+    title_word_count             int64      nuniq=21      eg=['10', '10']
+    tag_count                    int64      nuniq=41      eg=['12', '1']
+    description_length           int64      nuniq=1106    eg=['389', '559']
+    category_id                  int64      nuniq=9       eg=['24', '24']
+    has_caption                  int64      nuniq=2       eg=['1', '0']
+    has_thumbnail                int64      nuniq=1       eg=['1', '1']
+    brightness                   float64    nuniq=1950    eg=['53.74537615740741', '47.75384837962963']
+    contrast                     float64    nuniq=1950    eg=['57.59228221816645', '57.264294013552025']
+    saturation                   float64    nuniq=1934    eg=['93.06256944444443', '88.01190972222223']
+    colorfulness                 float64    nuniq=1934    eg=['26.064197540283203', '31.827259063720703']
+    edge_density                 float64    nuniq=1825    eg=['0.0931076388888888', '0.0914409722222222']
+    warm_ratio                   float64    nuniq=1941    eg=['1.205225944519043', '0.7305142879486084']
+    text_area_frac               float64    nuniq=1882    eg=['0.3627777777777777', '0.1927546296296296']
+    face_count                   int64      nuniq=8       eg=['0', '0']
+    face_area_frac               float64    nuniq=1061    eg=['0.0', '0.0']
+
+[meta_ads_ocr.csv]  0.5 MB
+  rows=4229  cols=4
+    brand                        object     nuniq=17      eg=['amazon_india', 'amazon_india']
+    creative_id                  object     nuniq=2000    eg=['1000044815977078_0', '1001843945886663_0']
+    ocr_text                     object     nuniq=1076    eg=['NO', 'IYER AATHU" Your {amily deserter (he bei']
+    char_len                     int64      nuniq=248     eg=['2', '0']
+
+[model_results.csv]  0.0 MB
+  rows=10  cols=6
+    experiment                   object     nuniq=10      eg=['metadata_only', 'cv_only']
+    auc                          float64    nuniq=10      eg=['0.5574', '0.5588']
+    accuracy                     float64    nuniq=10      eg=['0.5496', '0.5538']
+    n_features                   int64      nuniq=8       eg=['14', '9']
+    n_train                      int64      nuniq=4       eg=['9548', '9548']
+    n_test                       int64      nuniq=4       eg=['2387', '2387']
+
+[paid_ad_scores.csv]  1.4 MB
+  rows=29393  cols=4
+    source                       object     nuniq=1       eg=['meta', 'meta']
+    brand                        object     nuniq=17      eg=['amazon_india', 'amazon_india']
+    creative_id                  object     nuniq=2000    eg=['1000044815977078_0', '1001843945886663_0']
+    score                        float64    nuniq=828     eg=['0.519854', '0.477984']
+
+[reliability_calibrated.csv]  0.0 MB
+  rows=10  cols=5
+    bin_lo                       float64    nuniq=10      eg=['0.0', '0.1']
+    bin_hi                       float64    nuniq=10      eg=['0.1', '0.2']
+    n                            int64      nuniq=9       eg=['0', '16']
+    mean_pred                    float64    nuniq=8       eg=['0.1606', '0.2639']
+    frac_pos                     float64    nuniq=8       eg=['0.0625', '0.0889']
+
+[sample_scores.csv]  0.0 MB
+  rows=60  cols=4
+    source                       object     nuniq=2       eg=['google', 'google']
+    brand                        object     nuniq=5       eg=['cred', 'cred']
+    creative_id                  object     nuniq=60      eg=['CR02289277062654984193', 'CR15723074946450063361']
+    score                        float64    nuniq=54      eg=['0.558659', '0.556501']
+
+[videos_labeled.csv]  12.7 MB
+  rows=125803  cols=26
+    video_id                     object     nuniq=2000    eg=['sfBapUJCNJc', '3aLI_fPUquo']
+    channel_id                   object     nuniq=9       eg=['UC5_SBQbLA9Kg7Jh5GpXoP3g', 'UC5_SBQbLA9Kg7Jh5GpXoP3g']
+    channel_handle               object     nuniq=9       eg=['Adobe', 'Adobe']
+    channel_title                object     nuniq=9       eg=['Adobe', 'Adobe']
+    channel_country              object     nuniq=2       eg=['US', 'US']
+    subscriber_count             int64      nuniq=9       eg=['509000', '509000']
+    published_at                 object     nuniq=1957    eg=['2025-08-01 23:23:16+00:00', '2025-08-06 12:58:51+00:00']
+    title                        object     nuniq=1855    eg=['How Nature Inspires Creativity at Adobe ', 'Inside Adobe India’s Alchemy 2025 Intern']
+    description                  object     nuniq=1733    eg=['What happens when you step away from the', 'What happens when over 150 interns from ']
+    tags                         object     nuniq=339     eg=['Adobe|Adobe Creative Cloud|Creativity|Hi', 'Adobe|Coursera|Adobe Digital Academy|Gra']
+    category_id                  int64      nuniq=9       eg=['24', '24']
+    default_audio_language       object     nuniq=6       eg=['en', 'en']
+    live_broadcast_content       object     nuniq=1       eg=['none', 'none']
+    duration_seconds             int64      nuniq=580     eg=['140', '149']
+    definition                   object     nuniq=2       eg=['hd', 'hd']
+    caption                      bool       nuniq=2       eg=['True', 'False']
+    licensed_content             bool       nuniq=2       eg=['False', 'False']
+    view_count                   float64    nuniq=1892    eg=['959.0', '977.0']
+    like_count                   float64    nuniq=663     eg=['38.0', '13.0']
+    comment_count                float64    nuniq=127     eg=['6.0', '1.0']
+    thumbnail_url                object     nuniq=2000    eg=['https://i.ytimg.com/vi/sfBapUJCNJc/maxre', 'https://i.ytimg.com/vi/3aLI_fPUquo/sddef']
+    format                       object     nuniq=2       eg=['long', 'long']
+    baseline_median              float64    nuniq=749     eg=['959.0', '968.0']
+    prior_count                  int64      nuniq=248     eg=['0', '1']
+    labelable                    bool       nuniq=2       eg=['False', 'False']
+    overperformed                float64    nuniq=2       eg=['0.0', '0.0']
+
+[videos_raw.csv]  17.1 MB
+  rows=170182  cols=21
+    video_id                     object     nuniq=2000    eg=['OlinnrBPHm8', 'SPSBy_ZB-LE']
+    channel_id                   object     nuniq=8       eg=['UC5_SBQbLA9Kg7Jh5GpXoP3g', 'UC5_SBQbLA9Kg7Jh5GpXoP3g']
+    channel_handle               object     nuniq=8       eg=['Adobe', 'Adobe']
+    channel_title                object     nuniq=8       eg=['Adobe', 'Adobe']
+    channel_country              object     nuniq=2       eg=['US', 'US']
+    subscriber_count             int64      nuniq=8       eg=['509000', '509000']
+    published_at                 object     nuniq=1958    eg=['2026-08-13T13:08:09Z', '2026-08-12T21:17:21Z']
+    title                        object     nuniq=1856    eg=['Introduction | Digital Marketing | Adobe', 'George Kittle and Travis Hunter are Made']
+    description                  object     nuniq=1715    eg=['Build real digital marketing skills with', 'Can motion be an act of creation?']
+    tags                         object     nuniq=372     eg=['Adobe|Adobe Software|Adobe Cloud Storage', 'Adobe|Adobe Software|Adobe Cloud Storage']
+    category_id                  int64      nuniq=9       eg=['27', '27']
+    default_audio_language       object     nuniq=6       eg=['en-US', 'en-US']
+    live_broadcast_content       object     nuniq=2       eg=['none', 'none']
+    duration_seconds             int64      nuniq=521     eg=['165', '52']
+    definition                   object     nuniq=2       eg=['hd', 'hd']
+    caption                      bool       nuniq=2       eg=['False', 'True']
+    licensed_content             bool       nuniq=2       eg=['False', 'False']
+    view_count                   int64      nuniq=1850    eg=['101', '341']
+    like_count                   float64    nuniq=619     eg=['3.0', '4.0']
+    comment_count                float64    nuniq=109     eg=['2.0', '1.0']
+    thumbnail_url                object     nuniq=2000    eg=['https://i.ytimg.com/vi/OlinnrBPHm8/maxre', 'https://i.ytimg.com/vi/SPSBy_ZB-LE/sddef']
+
+[youtube_scores.csv]  0.5 MB
+  rows=13062  cols=4
+    video_id                     object     nuniq=2000    eg=['sfBapUJCNJc', '3aLI_fPUquo']
+    score                        float64    nuniq=1633    eg=['0.4601066985996036', '0.4230561934034741']
+    overperformed                float64    nuniq=2       eg=['0.0', '0.0']
+    labelable                    bool       nuniq=2       eg=['False', 'False']
+======================================================================
+NPY / NPZ in data/ and models/
+======================================================================
+
+[data\clip_embeddings.npy]  26.8 MB
+  shape=(13062, 512) dtype=float32 allow_pickle=False
+  head=['[-3.39196026e-01 -1.28723010e-', '[ 1.29843697e-01 -1.97183847e-']
+
+[data\clip_ids.npy]  0.2 MB
+  shape=(13062,) dtype=object allow_pickle=True
+  head=['sfBapUJCNJc', '3aLI_fPUquo']
+======================================================================
+JSON in data/ and models/
+======================================================================
+
+[data\platform_specs.json]  0.00 MB
+  dict keys[:20] = ['_note', '_verified_on', 'platforms']
+    _note -> Edit this file, not the code. Verify numbers against current platform docs before submission - ad specs drift. Sources: YouTube Help thumbnail specs, Meta Ads Guide, Google Ads image ad specs.
+    _verified_on -> 2026-08-28
+
+[data\top_performer_stats.json]  0.00 MB
+  dict keys[:20] = ['n_top_performers', 'n_total', 'base_rate', 'features']
+    n_top_performers -> 5511
+    n_total -> 13062
+
+[models\cnn_history.json]  0.00 MB
+  list len=5  head=[{'epoch': 1, 'train_loss': 0.6922002549546847, 'train_auc': 0.5416696417190672, 'val_loss': 0.6938428235054016, 'val_auc': 0.5344267717543623}, {'epoch': 2, 'train_loss': 0.6791092174336738, 'train_auc': 0.5888149004375575, 'val_loss': 0.6907987566788991, 'val_auc': 0.5574039166032394}]
+
+[models\feature_spec.json]  0.00 MB
+  dict keys[:20] = ['metadata_cols', 'cv_cols', 'clip_dims', 'tfidf_max_features', 'calib_method', 'calib_cv', 'order']
+    metadata_cols -> ['duration_seconds', 'hour_of_day', 'day_of_week', 'is_weekend', 'title_length', 'title_word_count', 'tag_count', 'description_length', 'category_id', 'has_caption', 'is_short']
+    cv_cols -> ['brightness', 'contrast', 'saturation', 'colorfulness', 'edge_density', 'warm_ratio', 'text_area_frac', 'face_count', 'face_area_frac']
+======================================================================
+PKL in models/
+======================================================================
+  best_model.pkl                   1.4 MB
+  calibrated_model.pkl             8.7 MB
+  calibrator.pkl                   0.0 MB
+  tfidf.pkl                        0.0 MB
+======================================================================
+IMAGE DIRS (counts)
+======================================================================
+  data\google_ads                          files=25224
+  data\heatmaps                            files=20
+  data\meta_ads                            files=4272
+  data\raw                                 files=62
+  data\sample_images                       files=60
+  data\thumbnails                          files=16900
+======================================================================
+PACKAGES
+======================================================================
+  numpy                      2.5.2
+  pandas                     2.3.0
+  torch                      2.13.0+cpu
+  transformers               4.46.3
+  lightgbm                   4.7.0
+  sklearn                    1.9.0
+  streamlit                  1.61.1
+  faiss                      MISSING
+  langchain                  MISSING
+  langchain_core             MISSING
+  langchain_groq             MISSING
+  langchain_google_genai     MISSING
+  PIL                        11.3.0

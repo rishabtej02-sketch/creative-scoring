@@ -1,0 +1,7 @@
+# Additional deps for Day 1 (Meta Ad Library scraper)
+# Install:  pip install -r requirements_ads.txt
+# After install, run: playwright install chromium
+
+playwright>=1.40.0
+tenacity>=8.2.0     # retry on transient failures
+python-dateutil>=2.8.2

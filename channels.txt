@@ -1,0 +1,92 @@
+# Brand channels for creative performance dataset
+# One handle per line, with or without the leading @
+# Lines starting with # are ignored
+#
+# IMPORTANT: Verify these before a full run. Handles change and some
+# brands run region-specific channels. Open youtube.com/@handle in a
+# browser to check. The collector reports every handle it cannot resolve
+# so you can fix or drop them — expect a few failures, that's normal.
+#
+# Aim for 50-70 channels that survive resolution, each with 40+ uploads.
+
+# ---- India: consumer tech / D2C ----
+boat-lifestyle
+Gonoise_Official
+MiviDigital
+realmemobiles
+OnePlus_IN
+
+# ---- India: food delivery / quick commerce ----
+zomato
+swiggyIndia
+letsblinkit
+zeptonow
+
+# ---- India: fintech ----
+CRED_club
+Groww
+zerodhaonline
+paytm
+PhonePe_
+
+# ---- India: e-commerce / fashion / beauty ----
+Myntra
+Nykaa
+AmazonInOfficial
+Flipkart
+ajiolife
+
+# ---- India: media / entertainment brands ----
+NetflixIndiaOfficial
+PrimeVideoIN
+JioHotstar
+
+# ---- India: travel / services ----
+MakeMyTripOfficial
+urbancompany
+OYO
+
+# ---- India: edtech / other ----
+unacademy
+physicswallah
+be.superyou
+
+# ---- Global: software / SaaS ----
+duolingo
+Canva
+notion
+Grammarly
+Figma
+Shopify
+HubSpot-CRM
+Mailchimp
+Slackhq
+zoom
+Dropbox
+Squarespace
+Wix
+Adobe
+Atlassian
+
+# ---- Global: consumer brands with strong creative ----
+redbull
+GoPro
+nike
+apple
+Samsung
+Coca-Cola
+McDonalds
+Starbucks
+Spotify
+Airbnb
+Ryanair
+Wendys
+OatlyTV
+liquiddeath2793
+DollarShaveClub
+
+# ---- Global: retail / marketplace ----
+IKEA
+Sephora
+lego
+Patagonia

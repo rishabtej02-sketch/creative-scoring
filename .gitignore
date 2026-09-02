@@ -1,0 +1,16 @@
+.env
+__pycache__/
+.venv/
+.playwright_meta/
+*.pyc
+.ipynb_checkpoints/
+paid_ads_google.zip
+paid_ads_meta.zip
+submission_dataset.zip
+data/google_ads/
+data/thumbnails/
+data/meta_ads/
+data/clip_embeddings_paid.npy
+src/app.py.bak
+src/app.py.bak_v1
+.streamlit/secrets.toml

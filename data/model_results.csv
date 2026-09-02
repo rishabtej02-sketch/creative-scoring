@@ -1,0 +1,11 @@
+experiment,auc,accuracy,n_features,n_train,n_test
+metadata_only,0.5574,0.5496,14,9548,2387
+cv_only,0.5588,0.5538,9,9548,2387
+metadata_plus_cv,0.5626,0.5492,23,9548,2387
+short_only_metadata_plus_cv,0.5564,0.5558,22,5483,1371
+long_only_metadata_plus_cv,0.5651,0.5772,22,4064,1017
+recent_metadata_plus_cv,0.5778,0.5647,23,7606,1902
+text_only,0.56,0.5597,300,9548,2387
+metadata_cv_text,0.58,0.5526,320,9548,2387
+clip_only,0.5918,0.5848,512,9548,2387
+clip_plus_metadata_cv_text,0.6154,0.5815,832,9548,2387

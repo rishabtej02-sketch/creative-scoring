@@ -1,0 +1,330 @@
+#!/usr/bin/env python3
+"""
+rag_chain.py - grounded creative feedback via LangChain.
+
+THE PROBLEM THIS SOLVES:
+The old feedback path sent the image plus one static top_performer_stats.json
+to Gemini. Every upload got the same reference numbers, so the advice came
+back generic - "increase contrast, reduce text" - true of almost any ad and
+therefore worth nothing.
+
+WHAT REPLACES IT - four grounding sources assembled per upload:
+  1. RETRIEVED  k nearest high-performing creatives (CLIP + retrieval.py),
+                with feature deltas vs the upload. This is the RAG part.
+  2. RANKED     the brand-and-platform percentile (brand_profiles.py).
+  3. CHECKED    the spec verdict (platform_specs.py).
+  4. MEASURED   the upload's own CV features and OCR text.
+
+The model is told, explicitly, to cite which of these it used per claim and
+to say "not supported by the retrieved evidence" rather than invent. That
+instruction is why the output schema has a `grounded_on` field: it makes
+ungroundedness visible instead of letting it hide in fluent prose.
+
+CHAIN: prompt | llm | structured parser   (LCEL, so .batch() runs the model
+comparison tab in parallel for free)
+
+CLI:
+    python src/rag_chain.py --demo path/to/creative.jpg --platform meta --brand zomato
+    python src/rag_chain.py --demo ad.jpg --platform meta --brand zomato --compare
+    python src/rag_chain.py --dry-run ad.jpg --platform meta --brand zomato
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import io
+import json
+import os
+import sys
+from typing import List, Optional
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from pydantic import BaseModel, Field  # noqa: E402
+
+
+# ---------------------------------------------------------------- schema
+class Fix(BaseModel):
+    change: str = Field(description="One specific, executable change. "
+                                    "Name the element and the direction.")
+    why: str = Field(description="Which retrieved evidence motivates it. "
+                                 "Cite neighbour numbers or the spec check.")
+    effort: str = Field(description="low | medium | high")
+
+
+class Feedback(BaseModel):
+    verdict: str = Field(description="One sentence. Include the percentile "
+                                     "and the pool it is measured against.")
+    strengths: List[str] = Field(default_factory=list,
+                                 description="2-3 items. Each must reference a "
+                                             "measured feature or a neighbour "
+                                             "comparison, not a vibe.")
+    weaknesses: List[str] = Field(default_factory=list,
+                                  description="2-3 items, same rule.")
+    fixes: List[Fix] = Field(default_factory=list,
+                             description="2-4 concrete changes, "
+                                         "highest expected impact first.")
+    grounded_on: List[str] = Field(
+        default_factory=list,
+        description="Which sources were actually used: retrieved_neighbours, "
+                    "brand_percentile, spec_check, own_features, image. "
+                    "Omit any source you did not rely on.")
+    confidence: str = Field(description="low | medium | high, plus a short "
+                                        "reason tied to evidence quality "
+                                        "(pool size, neighbour similarity).")
+
+
+SYSTEM = """You are a performance-creative analyst. You review one ad creative
+and give feedback that a designer can act on today.
+
+You are given retrieved evidence: similar high-performing creatives with their
+measured feature values, this creative's own measured features, its percentile
+inside a reference pool of comparable ads, and a platform specification check.
+
+Rules, in priority order:
+1. Ground every claim in the supplied evidence. Quote the actual numbers -
+   "11 words vs a neighbour median of 4" beats "too much text".
+2. If the evidence does not support a point, do not make it. Saying
+   "not supported by the retrieved evidence" is a correct answer.
+3. Never claim measured business outcomes. The percentile expresses similarity
+   to historically strong creatives, not observed clicks, sales or ROAS.
+   On unlabeled platforms say "more winner-like than X%", never "beats X%".
+4. Spec failures outrank aesthetic notes. A creative that cannot run is not
+   improved by better colour.
+5. Be concrete and brief. No filler, no restating the brief back.
+"""
+
+HUMAN = """CREATIVE UNDER REVIEW
+brand: {brand} | platform: {platform}
+
+MODEL SCORE
+raw calibrated score: {score:.4f}
+{percentile_line}
+{pool_line}
+{reliability_line}
+
+PLATFORM SPEC CHECK
+{spec_block}
+
+THIS CREATIVE'S MEASURED FEATURES
+{own_features}
+{ocr_line}
+
+RETRIEVED EVIDENCE
+{rag_block}
+
+{image_note}
+Return the structured feedback."""
+
+
+# ---------------------------------------------------------------- context
+def _fmt_feats(d: dict) -> str:
+    if not d:
+        return "(none extracted)"
+    return " | ".join(f"{k}={v:.3f}" if isinstance(v, float) else f"{k}={v}"
+                      for k, v in d.items())
+
+
+def build_context(score, platform, brand=None, own_feats=None, ocr_text="",
+                  image_path=None, k=5, spec_report=None, text_area_pct=None,
+                  clip_vec=None, verbose=False) -> dict:
+    """Assemble all four grounding sources. Every piece degrades gracefully -
+    a missing index or missing profile weakens the prompt, it does not break
+    the call."""
+    own_feats = own_feats or {}
+    ctx = {
+        "brand": brand or "unknown", "platform": platform, "score": score,
+        "percentile_line": "percentile: unavailable",
+        "pool_line": "", "reliability_line": "",
+        "spec_block": "(not run)", "rag_block": "(no index available)",
+        "own_features": _fmt_feats(own_feats),
+        "ocr_line": f"on-image text (OCR): \"{ocr_text[:300]}\"" if ocr_text
+                    else "on-image text (OCR): (none detected)",
+        "image_note": "", "_pct": None, "_hits": [],
+    }
+
+    # 2. RANKED
+    try:
+        from brand_profiles import BrandProfiles
+        bp = BrandProfiles.load()
+        r = bp.percentile(score, platform, brand)
+        ctx["_pct"] = r.pct
+        ctx["percentile_line"] = (
+            f"percentile: p{r.pct:.1f} ({r.label}) - {r.sentence()} "
+            f"[pool n={r.n}, basis={r.basis}, "
+            f"{'labeled' if r.labeled else 'UNLABELED'}]")
+        ctx["pool_line"] = bp.context_block(platform, brand)
+        if r.caveat:
+            ctx["reliability_line"] = f"caveat: {r.caveat}"
+    except Exception as e:
+        if verbose:
+            print(f"  [warn] brand profiles: {e}")
+
+    # 3. CHECKED
+    try:
+        if spec_report is None and image_path:
+            from platform_specs import check_image
+            spec_report = check_image(image_path, platform,
+                                      text_area_pct=text_area_pct)
+        if spec_report is not None:
+            ctx["spec_block"] = spec_report.prompt_block()
+    except Exception as e:
+        if verbose:
+            print(f"  [warn] spec check: {e}")
+
+    # 1. RETRIEVED
+    try:
+        from retrieval import Retriever
+        if clip_vec is not None:
+            rt = Retriever.load()
+            hits = rt.search(clip_vec, k=k, winners_only=True,
+                             brand=brand, platform=platform)
+            ctx["_hits"] = hits
+            ctx["rag_block"] = rt.prompt_block(hits, own_feats)
+    except Exception as e:
+        if verbose:
+            print(f"  [warn] retrieval: {e}")
+    return ctx
+
+
+# ---------------------------------------------------------------- chain
+def _image_part(image_path, max_px=768):
+    from PIL import Image
+    img = Image.open(image_path).convert("RGB")
+    img.thumbnail((max_px, max_px))
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=85)
+    b64 = base64.b64encode(buf.getvalue()).decode()
+    return {"type": "image_url",
+            "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
+
+
+def run_feedback(model_label, ctx, image_path=None, temperature=0.3):
+    """LCEL: messages -> llm -> Feedback. Vision models get the pixels;
+    text-only models get identical grounding minus the image, which is the
+    ablation arm."""
+    from langchain_core.messages import SystemMessage, HumanMessage
+    from llm_registry import get_llm, BY_LABEL
+
+    spec = BY_LABEL[model_label]
+    c = dict(ctx)
+    if spec.vision and image_path:
+        c["image_note"] = "The creative image is attached. Use it."
+    else:
+        c["image_note"] = ("NO IMAGE IS ATTACHED - this model is text-only. "
+                           "Reason from the measured features and retrieved "
+                           "evidence, and do not describe what you cannot see.")
+
+    text = HUMAN.format(**{k: v for k, v in c.items() if not k.startswith("_")})
+    content = [{"type": "text", "text": text}]
+    if spec.vision and image_path:
+        content.append(_image_part(image_path))
+
+    llm = get_llm(model_label, temperature=temperature)
+    msgs = [SystemMessage(content=SYSTEM), HumanMessage(content=content)]
+
+    try:
+        return llm.with_structured_output(Feedback).invoke(msgs), None
+    except Exception as e_struct:
+        # not every provider supports tool-based structured output cleanly
+        try:
+            from langchain_core.output_parsers import PydanticOutputParser
+            parser = PydanticOutputParser(pydantic_object=Feedback)
+            msgs[1].content[0]["text"] += (
+                "\n\nReturn ONLY JSON, no prose, no markdown fences:\n"
+                + parser.get_format_instructions())
+            raw = llm.invoke(msgs).content
+            if isinstance(raw, list):
+                raw = " ".join(b.get("text", "") for b in raw
+                               if isinstance(b, dict))
+            return parser.parse(raw.replace("```json", "").replace("```", "")), None
+        except Exception as e_parse:
+            return None, f"{type(e_struct).__name__}: {e_struct} | "\
+                         f"fallback {type(e_parse).__name__}: {e_parse}"
+
+
+def compare_models(labels, ctx, image_path=None):
+    """Same creative, same evidence, several models. Agreement between a
+    vision model and the text-only arm tells you whether a finding came from
+    the pixels or from the numbers."""
+    out = {}
+    for lb in labels:
+        fb, err = run_feedback(lb, ctx, image_path)
+        out[lb] = {"feedback": fb, "error": err}
+    return out
+
+
+def render(fb: Feedback) -> str:
+    L = [f"VERDICT: {fb.verdict}", ""]
+    if fb.strengths:
+        L.append("STRENGTHS")
+        L += [f"  + {s}" for s in fb.strengths]
+    if fb.weaknesses:
+        L.append("\nWEAKNESSES")
+        L += [f"  - {w}" for w in fb.weaknesses]
+    if fb.fixes:
+        L.append("\nFIXES")
+        for i, f in enumerate(fb.fixes, 1):
+            L.append(f"  {i}. [{f.effort}] {f.change}")
+            L.append(f"     why: {f.why}")
+    L.append(f"\ngrounded on: {', '.join(fb.grounded_on) or '(none declared)'}")
+    L.append(f"confidence : {fb.confidence}")
+    return "\n".join(L)
+
+
+# ---------------------------------------------------------------- cli
+def _embed_one(path):
+    try:
+        from embed_paid import embed_paths
+        V, ok = embed_paths([path], show=False)
+        return V[0] if len(V) else None
+    except Exception as e:
+        print(f"  [warn] could not embed image: {e}")
+        return None
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--demo", metavar="IMAGE")
+    ap.add_argument("--dry-run", metavar="IMAGE",
+                    help="build and print the prompt, call no model")
+    ap.add_argument("--platform", default="meta")
+    ap.add_argument("--brand", default=None)
+    ap.add_argument("--score", type=float, default=0.50)
+    ap.add_argument("--model", default=None)
+    ap.add_argument("--compare", action="store_true")
+    ap.add_argument("-k", type=int, default=5)
+    a = ap.parse_args()
+
+    img = a.demo or a.dry_run
+    if not img:
+        ap.print_help()
+        sys.exit(0)
+
+    print("building context...")
+    vec = _embed_one(img)
+    ctx = build_context(a.score, a.platform, a.brand, image_path=img,
+                        clip_vec=vec, k=a.k, verbose=True)
+
+    if a.dry_run:
+        print("\n" + "=" * 72)
+        print(HUMAN.format(**{k: v for k, v in ctx.items()
+                              if not k.startswith("_")},))
+        print("=" * 72)
+        sys.exit(0)
+
+    from llm_registry import available
+    av = [s.label for s in available()]
+    if not av:
+        sys.exit("no model keys set - run: python src/llm_registry.py --list")
+    labels = av if a.compare else [a.model or av[0]]
+
+    for lb, res in compare_models(labels, ctx, img).items():
+        print("\n" + "=" * 72)
+        print(f"MODEL: {lb}")
+        print("=" * 72)
+        if res["error"]:
+            print(f"  ERROR: {res['error']}")
+        else:
+            print(render(res["feedback"]))

@@ -1,0 +1,54 @@
+{
+  "_note": "Edit this file, not the code. Verify numbers against current platform docs before submission - ad specs drift. Sources: YouTube Help thumbnail specs, Meta Ads Guide, Google Ads image ad specs.",
+  "_verified_on": "2026-08-28",
+  "platforms": {
+    "youtube": {
+      "display": "YouTube",
+      "labeled": true,
+      "placements": [
+        {"name": "Thumbnail 16:9", "ratio": 1.7778, "ideal_w": 1280, "ideal_h": 720, "min_w": 640, "min_h": 360}
+      ],
+      "ratio_tolerance": 0.05,
+      "max_bytes": 2097152,
+      "formats": ["JPG", "PNG", "GIF", "BMP", "WEBP"],
+      "text_area": {"warn_pct": 30, "fail_pct": 55,
+                    "note": "No official cap. Heavy text hurts legibility at the ~210px width most impressions render at."}
+    },
+    "meta": {
+      "display": "Meta (Instagram / Facebook)",
+      "labeled": false,
+      "placements": [
+        {"name": "Feed square 1:1", "ratio": 1.0, "ideal_w": 1080, "ideal_h": 1080, "min_w": 600, "min_h": 600},
+        {"name": "Feed portrait 4:5", "ratio": 0.8, "ideal_w": 1080, "ideal_h": 1350, "min_w": 600, "min_h": 750},
+        {"name": "Stories / Reels 9:16", "ratio": 0.5625, "ideal_w": 1080, "ideal_h": 1920, "min_w": 600, "min_h": 1067},
+        {"name": "Link / landscape 1.91:1", "ratio": 1.91, "ideal_w": 1200, "ideal_h": 628, "min_w": 600, "min_h": 314}
+      ],
+      "ratio_tolerance": 0.04,
+      "max_bytes": 31457280,
+      "formats": ["JPG", "PNG"],
+      "text_area": {"warn_pct": 20, "fail_pct": 60,
+                    "note": "Meta retired the hard 20% text rule in 2021. Still a delivery-quality signal, so this warns - it never fails."}
+    },
+    "google": {
+      "display": "Google Display",
+      "labeled": false,
+      "placements": [
+        {"name": "Responsive landscape 1.91:1", "ratio": 1.91, "ideal_w": 1200, "ideal_h": 628, "min_w": 600, "min_h": 314},
+        {"name": "Responsive square 1:1", "ratio": 1.0, "ideal_w": 1200, "ideal_h": 1200, "min_w": 300, "min_h": 300},
+        {"name": "Medium rectangle 300x250", "ratio": 1.2, "ideal_w": 300, "ideal_h": 250, "min_w": 300, "min_h": 250},
+        {"name": "Large rectangle 336x280", "ratio": 1.2, "ideal_w": 336, "ideal_h": 280, "min_w": 336, "min_h": 280},
+        {"name": "Leaderboard 728x90", "ratio": 8.089, "ideal_w": 728, "ideal_h": 90, "min_w": 728, "min_h": 90},
+        {"name": "Half page 300x600", "ratio": 0.5, "ideal_w": 300, "ideal_h": 600, "min_w": 300, "min_h": 600},
+        {"name": "Wide skyscraper 160x600", "ratio": 0.2667, "ideal_w": 160, "ideal_h": 600, "min_w": 160, "min_h": 600},
+        {"name": "Mobile banner 320x50", "ratio": 6.4, "ideal_w": 320, "ideal_h": 50, "min_w": 320, "min_h": 50},
+        {"name": "Billboard 970x250", "ratio": 3.88, "ideal_w": 970, "ideal_h": 250, "min_w": 970, "min_h": 250}
+      ],
+      "ratio_tolerance": 0.03,
+      "max_bytes": 5242880,
+      "max_bytes_fixed_banner": 153600,
+      "formats": ["JPG", "PNG", "GIF"],
+      "text_area": {"warn_pct": 20, "fail_pct": 60,
+                    "note": "Google recommends keeping text under ~20% of responsive display image area."}
+    }
+  }
+}
