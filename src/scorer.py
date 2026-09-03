@@ -71,7 +71,7 @@ CV_COLS = [
 
 def colorfulness(img_bgr):
     """Hasler & Susstrunk (2003) colorfulness metric."""
-    b, g, r = cv2.split(img_bgr.astype("float32"))
+    b = img_bgr[:, :, 0].astype("float32"); g = img_bgr[:, :, 1].astype("float32"); r = img_bgr[:, :, 2].astype("float32")
     rg = r - g
     yb = 0.5 * (r + g) - b
     std = np.sqrt(rg.std() ** 2 + yb.std() ** 2)
@@ -83,7 +83,7 @@ def basic_cv_features(img_bgr):
     hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
     gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
-    b, g, r = cv2.split(img_bgr.astype("float32"))
+    b = img_bgr[:, :, 0].astype("float32"); g = img_bgr[:, :, 1].astype("float32"); r = img_bgr[:, :, 2].astype("float32")
     edges = cv2.Canny(gray, 100, 200)
 
     return {

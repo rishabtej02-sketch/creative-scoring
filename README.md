@@ -1,76 +1,77 @@
 # Creative Scoring App
 
-A machine learning application to score, analyze, and visualize performance predictions for digital creatives across YouTube, Meta, and Google Ads. 
+Machine learning app that scores digital creatives (YouTube, Meta, Google Ads) for expected performance before spend.
 
-This project uses computer vision, CLIP embeddings, and calibrated ML models to predict top-performing creatives and provide feature-level explanations (like Grad-CAM heatmaps).
+Uses computer vision + CLIP embeddings + calibrated ML models to predict top-performing creatives and explain them via Grad-CAM heatmaps.
 
 ---
 
 ## 🚀 Setup Instructions
 
-Due to GitHub's file size limits, this project is split into two parts: the **Code** (hosted here) and the **Heavy Data** (hosted securely on Google Drive). 
+Split into two parts: **Code** (GitHub) + **Heavy Data** (Google Drive).
 
-Follow these steps exactly to get the app running on your local machine.
+### 1. Clone the repo
 
-### 1. Clone the Repository
-First, pull the code and the Git LFS (Large File Storage) models:
 ```bash
-git clone [https://github.com/rishabtej02-sketch/creative-scoring.git](https://github.com/rishabtej02-sketch/creative-scoring.git)
+git clone https://github.com/rishabtej02-sketch/creative-scoring.git
 cd creative-scoring
 git lfs pull
 ```
 
-### 2. Set Up the Python Environment
-Create a virtual environment and install the required dependencies:
+### 2. Python environment
+
 ```bash
 python -m venv .venv
-# On Windows: .venv\Scripts\activate
-# On Mac/Linux: source .venv/bin/activate
-
-pip install -r requirements_ads.txt
+# Windows: .venv\Scripts\activate
+# Mac/Linux: source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 3. Download and Place the Heavy Data
-The raw images, thumbnails, and large `.npy` files are too big for GitHub. 
-1. Download the `creative-scoring-bigdata` folder from the provided Google Drive link.
-2. Extract the files and place them directly into the `data/` folder in this repository. 
-3. Your final path structure must look exactly like this or the app will crash:
-   * `data/google_ads/`
-   * `data/meta_ads/`
-   * `data/thumbnails/`
-   * `data/clip_embeddings_paid.npy`
-   * *(Any other zip files provided in the Drive)*
+### 3. Download heavy data
 
-### 4. Configure Secrets (API Keys)
-This app requires a Google Cloud API key to function, which is kept out of version control for security.
-1. Create a folder named `.streamlit` in the root of the project.
-2. Inside that folder, create a file named `secrets.toml`.
-3. Paste the GCP API Key provided to you privately into `secrets.toml`.
+Google Drive link: **https://drive.google.com/drive/folders/1dW38QPqrzP2m-kMpujnMBBm0Q1QJ8Sws?usp=drive_link**
 
-Your structure should look like this:
-```text
+Place downloaded files so final structure matches:
+
+```
 creative-scoring/
-├── .streamlit/
-│   └── secrets.toml
 ├── data/
-│   ├── google_ads/
-│   └── ...
-├── src/
-└── ...
+│   ├── google_ads/                    ← from Drive
+│   ├── meta_ads/                      ← from Drive
+│   ├── thumbnails/                    ← from Drive
+│   └── clip_embeddings_paid.npy       ← from Drive
 ```
+
+### 4. Verify setup
+
+```bash
+python src/verify_parity.py
+```
+Should print `max abs diff < 1e-6`. If yes → setup correct.
+
+### 5. Configure API keys
+
+Create `.env` in project root:
+```
+GROQ_API_KEY=xxx
+GOOGLE_API_KEY=xxx
+OPENROUTER_API_KEY=xxx
+```
+(Keys shared privately by owner.)
 
 ---
 
-## 💻 Running the App
-
-Once the data is in place and the secrets are configured, you can launch the Streamlit dashboard:
+## 💻 Run the app
 
 ```bash
 streamlit run src/app.py
 ```
 
+---
+
 ## 📂 Project Structure
-* `src/` - Core application scripts, ML pipelines, and Streamlit UI components.
-* `data/` - Datasets, extracted text (OCR), embeddings, and sample images.
-* `models/` - Trained models (`.pkl`), CNN weights, and calibration files (managed by Git LFS).
-* `figs/` - Generated Grad-CAM heatmaps and score distribution plots.
+
+* `src/` — Core scripts, ML pipeline, Streamlit UI
+* `data/` — Datasets, OCR, embeddings, samples
+* `models/` — Trained models (`.pkl`), CNN weights (Git LFS)
+* `figs/` — Grad-CAM heatmaps, score plots
